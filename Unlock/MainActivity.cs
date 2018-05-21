@@ -17,7 +17,7 @@ namespace Unlock
             SetContentView(Resource.Layout.Main);
 
             backgroundService = new Intent(ApplicationContext, typeof(LockScreenBackgroundService));
-            if (!IsServiceRunning())
+            if (!IsServiceRunning(Java.Lang.Class.FromType(typeof(LockScreenBackgroundService))))
             {
                 StartService(backgroundService);
                 Toast.MakeText(
@@ -25,21 +25,22 @@ namespace Unlock
                     "Service registered successfully!!",
                     ToastLength.Short
                 );
-                Finish();
+              
             }
-                
+            Finish();    
         }
 
-        private bool IsServiceRunning()
+        private bool IsServiceRunning(Java.Lang.Class serviceClass)
         {
-            //ActivityManager manager = (ActivityManager)GetSystemService(typeof(LockScreenBackgroundService));
-            //for (ActivityManager.RunningServiceInfo service : manager.GetRunningServices(30))
-            //{
-            //    if (serviceClass.getName().equals(service.service.getClassName()))
-            //    {
-            //        return true;
-            //    }
-            //}
+            ActivityManager manager = (ActivityManager)GetSystemService(Context.ActivityService);
+            // foreach (RunningServiceInfo service in manager.GetRunningServices(int.MaxValue))
+            foreach (var item in manager.GetRunningServices(int.MaxValue))
+            {
+                if (serviceClass.Name.Equals(item.Service.ClassName))
+                {
+                    return true;
+                }
+            }
             return false;
 
         }

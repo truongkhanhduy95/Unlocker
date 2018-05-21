@@ -13,7 +13,7 @@ namespace Unlock
     }, Priority = 100)]
     public class LockScreenReciever : BroadcastReceiver
     {
-        const int notificationId = 888;
+        const int notificationId = 777;
 
         public override void OnReceive(Context context, Intent intent)
         {
@@ -34,16 +34,23 @@ namespace Unlock
 
         private void ShowLocalNotification(Context context)
         {
+
+            Intent intent = new Intent(context, typeof(MainActivity));;
+
+            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, PendingIntentFlags.UpdateCurrent);
             //Implement notification
             // Instantiate the builder and set notification elements:
             Notification.Builder builder = new Notification.Builder(context)
                 .SetContentTitle(string.Empty)
                 .SetContentText(string.Empty)
-                .SetSmallIcon(Resource.Drawable.@lock);
-
+                .SetSmallIcon(Resource.Drawable.@lock)
+                .AddAction(new Notification.Action(Resource.Drawable.@lock,"action",pendingIntent));
+            
             // Build the notification:
             Notification notification = builder.Build();
-            notification.Flags = NotificationFlags.AutoCancel;
+            notification.SetLatestEventInfo(context, string.Empty, string.Empty, pendingIntent);
+
+            notification.Flags |= NotificationFlags.AutoCancel;
             // Get the notification manager:
             NotificationManager notificationManager =
                 context.GetSystemService(Context.NotificationService) as NotificationManager;
