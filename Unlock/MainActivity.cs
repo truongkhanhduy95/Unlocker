@@ -19,7 +19,7 @@ namespace Unlock
             backgroundService = new Intent(ApplicationContext, typeof(LockScreenBackgroundService));
             if (!IsServiceRunning(Java.Lang.Class.FromType(typeof(LockScreenBackgroundService))))
             {
-                StartService(backgroundService);
+                StartForegroundService(backgroundService);
                 Toast.MakeText(
                     this,
                     "Service registered successfully!!",

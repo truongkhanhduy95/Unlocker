@@ -21,7 +21,7 @@ namespace Unlock
             {
                 case Android.Content.Intent.ActionBootCompleted: //Device rebooted
                 case ActionUnlock.Recall:                       //Application killed
-                    context.StartService(new Intent(context, typeof(LockScreenBackgroundService))); //restart service
+                    context.StartForegroundService(new Intent(context, typeof(LockScreenBackgroundService))); //restart service
                     break;
                 case Android.Content.Intent.ActionUserPresent:   //Screen unlocked
                     KillLocalNotification(context);
