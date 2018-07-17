@@ -19,18 +19,24 @@ namespace Unlock
 
         public override void OnReceive(Context context, Intent intent)
         {
-            switch(intent.Action)
+            try
             {
-                case Android.Content.Intent.ActionBootCompleted: //Device rebooted
-                case ActionUnlock.Recall:                       //Application killed
-                    StartLockScreenService(context);
-                    break;
-                case Android.Content.Intent.ActionUserPresent:   //Screen unlocked
-                    KillLocalNotification(context);
-                    break;
-                case Android.Content.Intent.ActionScreenOff: //Screen locked
-                    ShowLocalNotification(context);
-                    break;
+                switch (intent.Action)
+                {
+                    case Android.Content.Intent.ActionBootCompleted: //Device rebooted
+                    case ActionUnlock.Recall:                       //Application killed
+                        StartLockScreenService(context);
+                        break;
+                    case Android.Content.Intent.ActionUserPresent:   //Screen unlocked
+                        KillLocalNotification(context);
+                        break;
+                    case Android.Content.Intent.ActionScreenOff: //Screen locked
+                        ShowLocalNotification(context);
+                        break;
+                }
+            } catch(Exception ex)
+            {
+                Android.Util.Log.Error("LockScreenReciever", ex.Message);
             }
         }
 

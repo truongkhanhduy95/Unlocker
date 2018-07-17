@@ -46,6 +46,8 @@ namespace Unlock
             Log.Info("Job","Start");
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.AddAction(Android.Content.Intent.ActionScreenOff);
+            intentFilter.AddAction(Android.Content.Intent.ActionUserPresent);
+            intentFilter.AddAction(Android.Content.Intent.ActionBootCompleted);
             intentFilter.AddAction(ActionUnlock.Recall);
             intentFilter.Priority = 100;
 
