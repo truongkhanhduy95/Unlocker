@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Android.App;
+using Android.App.Job;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -9,16 +10,12 @@ using Java.Util;
 
 namespace Unlock
 {
-    [Service(Exported = true, Enabled = true)]
-    public class LockScreenBackgroundService : Service
+    [Service(Exported = true, Enabled = true, Permission = "android.permission.BIND_JOB_SERVICE")]
+    public class LockScreenBackgroundService : JobService
     {
         private LockScreenReciever mReciever = null;
         private Timer timer;
 
-        public override IBinder OnBind(Intent intent)
-        {
-            return null;
-        }
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
@@ -27,28 +24,6 @@ namespace Unlock
             return StartCommandResult.Sticky;
         }
 
-        public override void OnCreate()
-        {
-            base.OnCreate();
-
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.AddAction(Android.Content.Intent.ActionScreenOff);
-            intentFilter.AddAction(ActionUnlock.Recall);
-            intentFilter.Priority = 100;
-
-            mReciever = new LockScreenReciever();
-
-            RegisterReceiver(mReciever, intentFilter);
-        }
-
-        public override void OnDestroy()
-        {
-
-            Intent broadcastIntent = new Intent(ActionUnlock.Recall);
-            SendBroadcast(broadcastIntent);
-
-            base.OnDestroy();
-        }
 
         public override void OnTaskRemoved(Intent rootIntent)
         {
@@ -64,6 +39,34 @@ namespace Unlock
 
             base.OnTaskRemoved(rootIntent);
         }
+
+        public override bool OnStartJob(JobParameters @params)
+        {
+            System.Diagnostics.Debug.WriteLine("Start");
+            Log.Info("Job","Start");
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.AddAction(Android.Content.Intent.ActionScreenOff);
+            intentFilter.AddAction(ActionUnlock.Recall);
+            intentFilter.Priority = 100;
+
+            mReciever = new LockScreenReciever();
+
+            RegisterReceiver(mReciever, intentFilter);
+            return true;
+        }
+
+        public override bool OnStopJob(JobParameters @params)
+        {
+            Log.Info("Job", "Stop");
+            System.Diagnostics.Debug.WriteLine("Stop");
+            Intent broadcastIntent = new Intent(ActionUnlock.Recall);
+            SendBroadcast(broadcastIntent);
+
+            return false;
+        }
+
+       
+
     }
 	
 }
